@@ -1,0 +1,174 @@
+{
+  "users": [
+    {
+      "id": "user-1",
+      "username": "jane_doe",
+      "email": "jane@community.org",
+      "points": 340,
+      "reportsCount": 5,
+      "verificationsCount": 14,
+      "badges": ["Pothole Patrol", "Local Vigilante", "Vibe Guardian"],
+      "role": "citizen"
+    },
+    {
+      "id": "user-2",
+      "username": "seattle_works",
+      "email": "authority@chandigarh.gov",
+      "points": 1200,
+      "reportsCount": 0,
+      "verificationsCount": 42,
+      "badges": ["Official Responder", "City Engineer"],
+      "role": "authority"
+    },
+    {
+      "id": "user-3",
+      "username": "brian_k",
+      "email": "brian@neighborhood.net",
+      "points": 180,
+      "reportsCount": 2,
+      "verificationsCount": 8,
+      "badges": ["Eco Warrior"],
+      "role": "citizen"
+    }
+  ],
+  "issues": [
+    {
+      "id": "issue-1",
+      "title": "Severe Water Main Leakage",
+      "description": "Clean water is actively bubbling up through the asphalt near the sidewalk, creating a large, deep puddle that blocks pedestrian access and is starting to erode the curb. Spanning about 15 feet across Chandigarh's busy Madhya Marg.",
+      "category": "Water Leakage",
+      "status": "reported",
+      "imageUrl": "https://images.unsplash.com/photo-1542044896530-05d85be9b11a?w=800&auto=format&fit=crop&q=60",
+      "latitude": 30.7380,
+      "longitude": 76.7720,
+      "locationName": "Madhya Marg, Sector 17 Plaza, Chandigarh",
+      "severity": "high",
+      "reportedBy": "user-1",
+      "reporterName": "jane_doe",
+      "reportedAt": "2026-06-25T14:30:00Z",
+      "verifiedBy": ["user-3", "user-web-1", "user-web-2"],
+      "rejectedBy": [],
+      "score": 3,
+      "authorityAction": null,
+      "comments": [
+        {
+          "id": "c-1",
+          "userId": "user-3",
+          "username": "brian_k",
+          "text": "This is getting worse. Water has been running like this since yesterday morning.",
+          "createdAt": "2026-06-25T16:00:00Z"
+        }
+      ],
+      "tags": ["water-waste", "flooding", "pedestrian-hazard"]
+    },
+    {
+      "id": "issue-2",
+      "title": "Deep Double Pothole on Jan Marg",
+      "description": "Two extremely deep potholes are aligned right in the middle of the driving lane. They are about 8 inches deep and have already damaged several rims of vehicles passing by. Highly dangerous for cyclists touring Sector 16.",
+      "category": "Pothole",
+      "status": "verified",
+      "imageUrl": "https://images.unsplash.com/photo-1515162305285-0293e4767cc2?w=800&auto=format&fit=crop&q=60",
+      "latitude": 30.7410,
+      "longitude": 76.7680,
+      "locationName": "Jan Marg, Sector 16 (opp. Rose Garden), Chandigarh",
+      "severity": "high",
+      "reportedBy": "user-3",
+      "reporterName": "brian_k",
+      "reportedAt": "2026-06-24T09:15:00Z",
+      "verifiedBy": ["user-1", "user-web-3", "user-web-4", "user-web-5", "user-web-6"],
+      "rejectedBy": [],
+      "score": 5,
+      "authorityAction": null,
+      "comments": [
+        {
+          "id": "c-2",
+          "userId": "user-1",
+          "username": "jane_doe",
+          "text": "My friend popped her tire on this exact spot last night. Be careful!",
+          "createdAt": "2026-06-24T11:20:00Z"
+        }
+      ],
+      "tags": ["car-damage", "cyclist-danger", "heavy-traffic"]
+    },
+    {
+      "id": "issue-3",
+      "title": "Damaged Streetlight Near Shanti Path Playground",
+      "description": "The streetlight fixture on pole #12-CH is completely shattered, and wires are hanging down (though covered). The entire play area of Sector 22-B park is pitch dark after 6 PM, creating a safety issue for kids.",
+      "category": "Damaged Streetlight",
+      "status": "in_progress",
+      "imageUrl": "https://images.unsplash.com/photo-1509021436665-8f37df706a73?w=800&auto=format&fit=crop&q=60",
+      "latitude": 30.7290,
+      "longitude": 76.7620,
+      "locationName": "Shanti Path, Sector 22-B, Chandigarh",
+      "severity": "medium",
+      "reportedBy": "user-1",
+      "reporterName": "jane_doe",
+      "reportedAt": "2026-06-23T18:45:00Z",
+      "verifiedBy": ["user-3", "user-web-7"],
+      "rejectedBy": [],
+      "score": 2,
+      "authorityAction": {
+        "note": "Chandigarh Municipal Corporation (MCC) Crew has been dispatched to install a new LED fixture and tuck away hanging cables. Scheduled completion is within 48 hours.",
+        "updatedBy": "seattle_works",
+        "updatedAt": "2026-06-25T10:00:00Z"
+      },
+      "comments": [],
+      "tags": ["dark-park", "electrical", "safety"]
+    },
+    {
+      "id": "issue-4",
+      "title": "Illegal Dumping / Overflowing Garbage Bin",
+      "description": "Someone dumped a large mattress, three wooden pallets, and several bags of construction debris right next to the municipal garbage cans, fully blocking the Sector 22 sidewalk and attracting rodents.",
+      "category": "Waste Management",
+      "status": "resolved",
+      "imageUrl": "https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?w=800&auto=format&fit=crop&q=60",
+      "latitude": 30.7260,
+      "longitude": 76.7750,
+      "locationName": "Himalaya Marg, Sector 22 Market, Chandigarh",
+      "severity": "medium",
+      "reportedBy": "user-3",
+      "reporterName": "brian_k",
+      "reportedAt": "2026-06-22T08:00:00Z",
+      "verifiedBy": ["user-1", "user-web-8", "user-web-9", "user-web-10"],
+      "rejectedBy": [],
+      "score": 4,
+      "authorityAction": {
+        "note": "Chandigarh Municipal Corporation (MCC) Clean Team has picked up the debris and swept the sidewalk. Issue resolved.",
+        "updatedBy": "seattle_works",
+        "updatedAt": "2026-06-23T15:30:00Z"
+      },
+      "comments": [
+        {
+          "id": "c-3",
+          "userId": "user-2",
+          "username": "seattle_works",
+          "text": "Thank you for reporting. Our clean team resolved this on Tuesday.",
+          "createdAt": "2026-06-23T15:31:00Z"
+        }
+      ],
+      "tags": ["illegal-dumping", "sidewalk-blocked", "sanitation"]
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hotspot-1",
+      "title": "Water Main Corrosion Cluster",
+      "category": "Water Leakage",
+      "latitude": 30.7390,
+      "longitude": 76.7730,
+      "riskScore": 85,
+      "reasoning": "Frequent low-volume reports combined with ancient cast-iron pipe layouts in the Madhya Marg corridor suggest systemic pressure fatigue.",
+      "recommendation": "Priority ultrasonic pipe inspection and pressure-reducing valve adjustment."
+    },
+    {
+      "id": "hotspot-2",
+      "title": "Arterial Road Wear Corridor",
+      "category": "Pothole",
+      "latitude": 30.7400,
+      "longitude": 76.7690,
+      "riskScore": 72,
+      "reasoning": "High heavy-vehicle turning volume paired with current double potholes indicates accelerated asphalt crumbling along the bus route near Sector 16.",
+      "recommendation": "Full lane milling and resurfacing rather than localized cold-patches."
+    }
+  ]
+}
