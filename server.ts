@@ -37,7 +37,8 @@ function initDB() {
           reportsCount: 5,
           verificationsCount: 14,
           badges: ['Pothole Patrol', 'Local Vigilante', 'Vibe Guardian'],
-          role: 'citizen'
+          role: 'citizen',
+          password: 'password123'
         },
         {
           id: 'user-2',
@@ -47,7 +48,8 @@ function initDB() {
           reportsCount: 0,
           verificationsCount: 42,
           badges: ['Official Responder', 'City Engineer'],
-          role: 'authority'
+          role: 'authority',
+          password: 'password123'
         },
         {
           id: 'user-3',
@@ -57,7 +59,8 @@ function initDB() {
           reportsCount: 2,
           verificationsCount: 8,
           badges: ['Eco Warrior'],
-          role: 'citizen'
+          role: 'citizen',
+          password: 'password123'
         }
       ],
       issues: [],
@@ -121,31 +124,60 @@ function getGeminiClient(): GoogleGenAI | null {
 
 // 1. Authentication & Users
 app.post('/api/login', (req, res) => {
-  const { username, role } = req.body;
+  const { username, password } = req.body;
   if (!username) {
     return res.status(400).json({ error: 'Username is required' });
   }
 
   const db = readDB();
-  let user = db.users.find((u: User) => u.username.toLowerCase() === username.toLowerCase());
+  const user = db.users.find((u: any) => u.username.toLowerCase() === username.toLowerCase());
 
   if (!user) {
-    // Register new user
-    user = {
-      id: `user-${Date.now()}`,
-      username: username,
-      email: `${username}@community.org`,
-      points: 50, // Starting bonus
-      reportsCount: 0,
-      verificationsCount: 0,
-      badges: ['New Neighbor'],
-      role: role || 'citizen'
-    };
-    db.users.push(user);
-    writeDB(db);
+    return res.status(404).json({ error: 'User not found. Please sign up first!' });
   }
 
-  res.json(user);
+  // Check password - legacy accounts without a password will default to 'password123'
+  const storedPassword = user.password || 'password123';
+  if (password !== storedPassword) {
+    return res.status(401).json({ error: 'Incorrect password. Please try again.' });
+  }
+
+  // Return user details without password for security
+  const { password: _, ...safeUser } = user;
+  res.json(safeUser);
+});
+
+app.post('/api/register', (req, res) => {
+  const { username, password, email, role } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password are required' });
+  }
+
+  const db = readDB();
+  const existingUser = db.users.find((u: any) => u.username.toLowerCase() === username.toLowerCase());
+
+  if (existingUser) {
+    return res.status(400).json({ error: 'Username is already taken. Please choose another one.' });
+  }
+
+  const newUser = {
+    id: `user-${Date.now()}`,
+    username: username,
+    email: email || `${username}@community.org`,
+    points: 100, // starting bonus!
+    reportsCount: 0,
+    verificationsCount: 0,
+    badges: ['New Neighbor'],
+    role: role || 'citizen',
+    password: password
+  };
+
+  db.users.push(newUser);
+  writeDB(db);
+
+  const { password: _, ...safeUser } = newUser;
+  res.status(201).json(safeUser); // Note: 201 is standard, but the original returns 201 or json
 });
 
 app.get('/api/users/leaderboard', (req, res) => {

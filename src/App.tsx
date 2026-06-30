@@ -27,6 +27,7 @@ import ReportIssueForm from './components/ReportIssueForm';
 import IssueDetails from './components/IssueDetails';
 import Leaderboard from './components/Leaderboard';
 import PredictiveInsights from './components/PredictiveInsights';
+import AuthPage from './components/AuthPage';
 
 export default function App() {
   // State variables
@@ -34,6 +35,7 @@ export default function App() {
   const [users, setUsers] = useState<User[]>([]);
   const [hotspots, setHotspots] = useState<HotspotPrediction[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isGuest, setIsGuest] = useState<boolean>(false);
   
   // Selection and Interactive state
   const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null);
@@ -51,8 +53,7 @@ export default function App() {
     fetchIssues();
     fetchUsers();
     
-    // Auto-login default citizen to allow immediate usage
-    handleLogin('jane_doe', 'citizen');
+    // We do NOT auto-login anymore so that the user is initially greeted by the high-quality Sign In & Sign Up landing page
   }, []);
 
   const fetchIssues = async () => {
@@ -79,12 +80,12 @@ export default function App() {
     }
   };
 
-  const handleLogin = async (username: string, role: 'citizen' | 'authority') => {
+  const handleLogin = async (username: string, password?: string) => {
     try {
       const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, role })
+        body: JSON.stringify({ username, password: password || 'password123' })
       });
       if (res.ok) {
         const user = await res.json();
@@ -92,10 +93,47 @@ export default function App() {
         
         // Refresh users list in case a new custom profile was registered
         fetchUsers();
+        return { success: true };
+      } else {
+        const errData = await res.json();
+        return { success: false, error: errData.error || 'Login failed' };
       }
     } catch (e) {
       console.error('Login failed:', e);
+      return { success: false, error: 'Could not connect to authentication server' };
     }
+  };
+
+  const handleRegister = async (username: string, password?: string, role?: 'citizen' | 'authority', email?: string) => {
+    try {
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          username, 
+          password: password || 'password123', 
+          role: role || 'citizen',
+          email: email || `${username}@community.org`
+        })
+      });
+      if (res.ok) {
+        const user = await res.json();
+        setCurrentUser(user);
+        fetchUsers();
+        return { success: true };
+      } else {
+        const errData = await res.json();
+        return { success: false, error: errData.error || 'Registration failed' };
+      }
+    } catch (e) {
+      console.error('Registration failed:', e);
+      return { success: false, error: 'Could not connect to registration server' };
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setIsGuest(false);
   };
 
   const handleReportSubmit = async (formData: any) => {
@@ -236,6 +274,16 @@ export default function App() {
 
   const selectedIssue = issues.find(i => i.id === selectedIssueId) || null;
 
+  if (!currentUser && !isGuest) {
+    return (
+      <AuthPage
+        onLogin={handleLogin}
+        onRegister={handleRegister}
+        onContinueAsGuest={() => setIsGuest(true)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 font-sans flex flex-col antialiased">
       
@@ -254,13 +302,43 @@ export default function App() {
             </div>
           </div>
 
-          <div className="hidden sm:flex items-center gap-4 text-xs font-mono bg-slate-800/60 px-4 py-2 rounded-xl border border-slate-800">
-            <div className="flex items-center gap-1.5 text-slate-300">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>City Ingress: Chandigarh (Active)</span>
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-4 text-xs font-mono bg-slate-800/60 px-4 py-2 rounded-xl border border-slate-800">
+              <div className="flex items-center gap-1.5 text-slate-300">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>City Ingress: Chandigarh (Active)</span>
+              </div>
+              <span className="text-slate-600">|</span>
+              <span className="text-indigo-400 font-bold">{issues.length} Issues Reported</span>
             </div>
-            <span className="text-slate-600">|</span>
-            <span className="text-indigo-400 font-bold">{issues.length} Issues Reported</span>
+
+            {/* Profile Status Pill */}
+            {currentUser ? (
+              <div className="flex items-center gap-2.5 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 shadow-inner">
+                <div className="flex flex-col text-right">
+                  <span className="text-[11px] font-extrabold text-white leading-none">{currentUser.username}</span>
+                  <span className="text-[9px] font-mono text-indigo-400 font-bold mt-0.5">
+                    {currentUser.role === 'authority' ? 'Municipal Staff' : `${currentUser.points} XP`}
+                  </span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="px-2 py-0.5 bg-rose-600/90 hover:bg-rose-600 active:scale-95 text-[9px] font-mono font-black rounded text-white tracking-wide cursor-pointer transition"
+                >
+                  LOGOUT
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 shadow-inner">
+                <span className="text-[9px] text-amber-400 font-black font-mono tracking-wider animate-pulse">GUEST</span>
+                <button
+                  onClick={() => setIsGuest(false)}
+                  className="px-2 py-0.5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-[9px] font-mono font-black rounded text-white tracking-wide cursor-pointer transition"
+                >
+                  SIGN IN
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -497,6 +575,8 @@ export default function App() {
                   users={users}
                   currentUser={currentUser}
                   onLogin={handleLogin}
+                  onRegister={handleRegister}
+                  onLogout={handleLogout}
                 />
               )}
             </>
